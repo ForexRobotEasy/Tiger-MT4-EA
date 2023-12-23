@@ -1,0 +1,60 @@
+mql5
+//+------------------------------------------------------------------+
+//|                                                   Tiger MT4 EA  |
+//|                                        Developer: Forex Robot Easy Team |
+//|                                                 Site: forexroboteasy.com |
+//+------------------------------------------------------------------+
+
+// Define input parameters
+input double lotSize = 0.01; // Lot size for each trade
+input int gridSpacing = 10; // Distance between each grid level
+input int maxOrders = 10; // Maximum number of orders to open
+input int magicNumber = 123456; // Magic number to identify trades
+
+//+------------------------------------------------------------------+
+//| Expert initialization function                                   |
+//+------------------------------------------------------------------+
+int OnInit()
+{
+   // Set the magic number for the Expert Advisor
+   ExpertMagicNumber(magicNumber);
+
+   return(INIT_SUCCEEDED);
+}
+
+//+------------------------------------------------------------------+
+//| Expert deinitialization function                                 |
+//+------------------------------------------------------------------+
+void OnDeinit(const int reason)
+{
+   // Perform any necessary cleanup tasks
+}
+
+//+------------------------------------------------------------------+
+//| Expert tick function                                             |
+//+------------------------------------------------------------------+
+void OnTick()
+{
+   // Check if the current price is within the grid spacing
+   double currentPrice = SymbolInfoDouble(_Symbol, SYMBOL_BID);
+   double gridLevel = NormalizeDouble(currentPrice / gridSpacing, _Digits);
+
+   // Open new trades at each grid level
+   for (int i = 1; i <= maxOrders; i++)
+   {
+      double buyPrice = NormalizeDouble(gridLevel * gridSpacing, _Digits);
+      double sellPrice = NormalizeDouble(gridLevel * gridSpacing, _Digits);
+
+      // Open buy trade
+      int ticketBuy = OrderSend(_Symbol, OP_BUY, lotSize, buyPrice, 3, 0, 0, 'Tiger MT4 EA', magicNumber, 0, clrGreen);
+
+      // Open sell trade
+      int ticketSell = OrderSend(_Symbol, OP_SELL, lotSize, sellPrice, 3, 0, 0, 'Tiger MT4 EA', magicNumber, 0, clrRed);
+
+      // Check if the orders were successfully opened
+      if (ticketBuy > 0 && ticketSell > 0)
+      {
+         // Add necessary logic here for handling successful trades
+      }
+   }
+}
